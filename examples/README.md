@@ -1,12 +1,12 @@
 # Example Scripts
 
-In this directory, you'll find the following file structure:
+In this directory, you'll find facillitator-created examples for questions previously asked by students:
 
 | Direcotry   | Description                                                |
 | ----------- | ---------------------------------------------------------- |
 | observables | Observable examples. Includes unit tests only.             |
 | restful-api | RESTful API example using mongodb. No unit tests included. |
-| testing     | Testing examples. Includes unit and e2e tests.             |
+| testing     | Unit testing examples.                                     |
 
 ## General Use
 
@@ -14,10 +14,11 @@ Each sub-directory contains a small, standlone Node app featuring a specific use
 
 Each app can be installed by:
 
-```bash
-cd <directory_name>
+1. Opening the directory in terminal and installing packages:
 
-npm install # or yarn isntall
+```bash
+$ cd <directory_name>
+$ npm install
 ```
 
-and run based on commands found in `sctips` of the app's `package.json`.
+2. Run the commands found in `package.json` `sctips` for that app.
