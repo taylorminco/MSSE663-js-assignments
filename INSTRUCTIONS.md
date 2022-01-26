@@ -82,7 +82,13 @@ Ex.: https://github.com/morgnism/MSSE663-js-assignments/tree/master/week2
 
 ### Overview
 
-TBD
+Now that Angular's setup and running. Let's add more building blocks by introducing a new feature. The main feature of our app is pizzas. We'll need to:
+
+1. Create the routed component for the pizzas display
+2. Add a router to navigate the SPA
+3. Clean up loose ends in the DOM
+
+SPAs need a way to display new components and features, but because they don't use traditional routing, we need to specificy how components are swapped in and out to create that dynamic expereince of navigating to different pages.
 
 ### Steup
 
@@ -93,7 +99,245 @@ $ git checkout -b week2
 
 ### Instructions
 
-TBD
+#### Create New Components
+
+Create a component for housing the main pizza functionality/features:
+
+1. Create a folder and component for a `home` view:
+
+```typescript
+// home.component.ts
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.scss'],
+})
+export class HomeComponent {
+  title = 'home!';
+}
+```
+
+```html
+<!-- home.component.html -->
+<h1>{{ title }}</h1>
+```
+
+2. Create a folder and component for `pizza-app`:
+
+```typescript
+// pizza-app.component.ts
+@Component({
+  selector: 'app-pizza-app',
+  templateUrl: './pizza-app.component.html',
+  styleUrls: ['./pizza-app.component.scss'],
+})
+export class PizzaAppComponent {}
+```
+
+```html
+<!-- pizza-app.component.html -->
+<div class="pizza-app">
+  <div class="pizza-viewer">
+    <div class="pizza">
+      <div class="pizza__board"></div>
+      <div class="pizza__base"></div>
+    </div>
+  </div>
+</div>
+```
+
+I've provided the css for your convenience:
+
+<details>
+<summary>Open for SCSS</summary>
+
+```scss
+.pizza-viewer {
+  width: 530px;
+  position: relative;
+
+  .pizza {
+    width: 530px;
+    height: 342px;
+    position: absolute;
+    z-index: 1;
+
+    &__board {
+      background: url(../../assets/board.svg) no-repeat 0 20px;
+      background-size: contain;
+      width: 500px;
+      height: 342px;
+      position: absolute;
+      z-index: 1;
+      top: 30px;
+      left: 30px;
+    }
+
+    &__base {
+      background: url(../../assets/base.svg) no-repeat;
+      background-size: contain;
+      width: 390px;
+      height: 322px;
+      position: absolute;
+      right: 23px;
+      top: 30px;
+      z-index: 2;
+    }
+  }
+}
+```
+
+</details>
+<br>
+
+3. Register the components in `AppModule`:
+
+```typescript
+// app.module.ts
+@NgModule({
+  declarations: [AppComponent, HomeComponent, PizzaAppComponent],
+  ...
+})
+export class AppModule {}
+```
+
+4. Add the reference to this new component's selector in `AppComponent`'s HTML:
+
+```html
+<!-- app.component.html -->
+<app-pizza-app></app-pizza-app>
+```
+
+With this, running the app will show a pizza SVG on the page. Now we can visualise what's happening in the component we created.
+
+#### Add Routing
+
+Next we want to be able to navigate to the feature and home views. To do that, we have to set up some routing:
+
+1. Create a root-level routing file with the new components registered:
+
+```typescript
+// app-routing.module.ts
+const routes: Routes = [
+  {
+    path: '',
+    component: HomeComponent,
+  },
+  {
+    path: 'pizzas',
+    component: PizzaAppComponent,
+  },
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule],
+})
+export class AppRoutingModule {}
+```
+
+> Exporting the `RouterModule` allows us to make configured modules available for importing into other modules. This technique is common through an Angular app.
+
+> Creating a separate module for files to live ensures small chunls of work is completed and sticks to the single-responsibility feature design.
+
+2. Then import that new module into the `AppModule` to register the routes:
+
+```typescript
+// app.module.ts
+@NgModule({
+  ...
+  imports: [BrowserModule, AppRoutingModule],
+  ...
+})
+export class AppModule {}
+```
+
+> From here on, any new components, directive, pipes, modules, etc will be assumed to be registered.
+
+3. Lastly, we need to tell Angular where to perform component swapping in `AppComponent`. In the compone'ts HTML, replace everything with:
+
+```html
+<!-- app.component.html -->
+<router-outlet></router-outlet>
+```
+
+Now when you run the app, you'll notice nothing really change, but if you inspect the section of content in Developer Tools and look at the "Elements" tab, expand blocks until you see `<router-outlet></router-outlet>`.
+
+#### Adding data for cleanup
+
+Lastly, we want to add in some relevant data apart from the views we generated solely with styles.
+
+1. Add the follwing data pieces to the `PizzaAppComponent` and html:
+
+```typescript
+// pizza-app.component.ts
+export class PizzaAppComponent {
+  prices = {
+    small: { base: 9.99, size: 10 },
+    meduim: { base: 11.99, size: 12 },
+    large: { base: 13.99, size: 14 },
+    'x-large': { base: 15.99, size: 16 },
+  };
+}
+```
+
+```html
+<!-- pizza-app.component.html -->
+<div class="pizza-app">
+  ...
+  <div class="pizza__summary">
+    <p>Small {{ prices.small.size }}</p>
+    <p>Medium {{ prices.meduim.size }}</p>
+    <p>Large {{ prices.large.size }}</p>
+    <p>X-Large {{ prices["x-large"].size }}</p>
+  </div>
+</div>
+```
+
+What we're doing here is displaying the data values directly to the user, but it's actually for our benefit to see how we can expect these values to look.
+
+You'll notice though the there's no formating to the pizza's size to indicate what this number means. To give our users an idea, we cna use formatting via a pipe.
+
+The first place we'll use a pipe is in `HomeComponent`'s HTML by adding `titelcase` pipe to the template:
+
+```html
+<!-- home.component.html -->
+<h1>{{ title | titlecase }}</h1>
+```
+
+We'll create a new pipe to accurately represent the pizza sizes:
+
+1. Create a series of nested folder for `shared/pipes` at the same level as `home` and `pizza-app`.
+2. In the `pipes` folder, create `SizePipe`:
+
+```typescript
+// size.pipe.ts
+@Pipe({
+  name: 'size',
+})
+export class SizePipe implements PipeTransform {
+  transform(size: number): string {
+    return `(${size}")`;
+  }
+}
+```
+
+3. Then apply the pipe like we did `titlecase` but on the pizza sizes:
+
+```html
+<!-- pizza-app.component.html -->
+<div class="pizza-app">
+  ...
+  <div class="pizza__summary">
+    <p>Small {{ prices.small.size | size }}</p>
+    <p>Medium {{ prices.meduim.size | size }}</p>
+    <p>Large {{ prices.large.size | size }}</p>
+    <p>X-Large {{ prices["x-large"].size | size }}</p>
+  </div>
+</div>
+```
+
+Now you'll see that the sizes are formated to present more information about what the data means.
 
 ### Submitting
 
