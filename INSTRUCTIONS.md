@@ -347,11 +347,17 @@ Ex.: https://github.com/morgnism/MSSE663-js-assignments/tree/master/week3
 
 ---
 
-## Week 3 - Mongo and Services
+## Week 3 - Services and Intro to Mongo
 
 ### Overview
 
-TBD
+We want to think about how data will flow in our app. We have some harcoded values that we used earlier, and it would be beneficial to use a service to fetch and send requests to. A service like this could be used to fetch order history or give a list of presaved pizzas.
+
+We'll want to:
+
+1. Create a navbar to nvaigate the site.
+2. Use the API to display a list pizzas.
+3. Test our features to make sure everything works.
 
 ### Steup
 
@@ -362,7 +368,179 @@ $ git checkout -b week3
 
 ### Instructions
 
-TBD
+#### Add Navigation
+
+First we'll want to route our new feature that will eventually act as a pizza order history page.
+
+1. Create a shared component for navigation called `NavBarComponent`:
+
+```typescript
+// nav-bar.component.ts
+@Component({
+  selector: 'app-nav-bar',
+  templateUrl: './nav-bar.component.html',
+  styleUrls: ['./nav-bar.component.scss'],
+})
+export class NavBarComponent {}
+```
+
+```html
+<!-- nav-bar.component.html -->
+<nav class="nav-bar">
+  <a routerLink="/" routerLinkActive="active">Home</a>
+  <a routerLink="pizzas" routerLinkActive="active">Creator</a>
+</nav>
+```
+
+I've provided the css for your convenience:
+
+<details>
+<summary>Open for SCSS</summary>
+
+```scss
+.nav-bar {
+  width: auto;
+  padding: 20px 0;
+  display: flex;
+  justify-content: flex-end;
+
+  a {
+    padding: 0 10px;
+  }
+}
+```
+
+</details>
+<br>
+
+2. Then use it in `AppComponent`'s HTML:
+
+```html
+<main>
+  <app-nav-bar></app-nav-bar>
+  <router-outlet></router-outlet>
+</main>
+```
+
+> We're also wrapping the content in a main block that will specify that everything inside it is the root content, and will allow us to style the content.
+
+I've provided the css for your convenience:
+
+<details>
+<summary>Open for SCSS</summary>
+
+```scss
+main {
+  font-size: 24px;
+  background: #fff;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0 15px;
+}
+```
+
+</details>
+<br>
+
+#### Using the API
+
+Now we'll get to use the API by creating a service for us to reference the pieces we need and feed them to the component.
+
+1. In `shared`, crete a new folder called `services` and a file for `PizzasService`:
+
+```typescript
+// pizzas.service.ts
+interface PizzaResponse {
+  msg: string;
+  pizzas: PizzaEntity[];
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PizzasService {
+  constructor(private http: HttpClient) {}
+
+  getPizzas(): Observable<PizzaEntity[]> {
+    return this.http
+      .get<PizzaResponse>('/api/pizzas')
+      .pipe(map((data) => data.pizzas));
+  }
+}
+```
+
+2. Next, we'll use this in `HomeComponent`:
+
+```typescript
+// home.component.ts
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.scss'],
+})
+export class HomeComponent {
+  readonly pizzas$ = this.pizzasService.getPizzas();
+
+  constructor(private pizzasService: PizzasService) {}
+}
+```
+
+```html
+<!-- home.component.html -->
+<section class="pizzas-list">
+  <div class="pizzas-list-item" *ngFor="let pizza of pizzas$ | async">
+    <p [class.pizzas-list-item__size]="pizza.toppings.length">
+      {{ pizza.size }}
+    </p>
+    <span
+      class="pizzas-list-item__toppings"
+      *ngFor="let topping of pizza.toppings"
+      >{{ topping }}</span
+    >
+  </div>
+</section>
+```
+
+I've provided the css for your convenience:
+
+<details>
+<summary>Open for SCSS</summary>
+
+```scss
+.pizzas-list {
+  display: flex;
+  flex-direction: column;
+
+  &-item {
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 0.5px solid rgb(0 0 0 / 12%);
+    border-radius: 9px;
+
+    &__size {
+      margin-bottom: 10px;
+    }
+
+    &__toppings {
+      border: 0.5px solid rgb(255 0 0 / 50%);
+      border-radius: 10px;
+      padding: 3px 7px;
+      margin-right: 10px;
+      font-size: 16px;
+      background-color: rgb(255 0 0 / 12%);
+      color: red;
+    }
+  }
+}
+```
+
+</details>
+<br>
+
+_Be sure to create your own style for this section._
+
+Now we can begin to see the connection between the front-end and the back-end to create a Full Stack application.
 
 ### Submitting
 
