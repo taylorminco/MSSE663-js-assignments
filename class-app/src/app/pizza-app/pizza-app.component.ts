@@ -1,14 +1,9 @@
 import { Component } from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormBuilder,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormArray, FormBuilder, Validators } from '@angular/forms';
+import { Store } from '@ngrx/store';
 import { Pizza } from 'api/lib/api-interfaces';
 import { map, startWith } from 'rxjs';
-import { PizzasStateService } from '../shared/services/pizzas-state.service';
+import { PizzasState } from './state';
 
 type PizzaPrice = {
   [size: string]: {
@@ -46,10 +41,7 @@ export class PizzaAppComponent {
     map(() => this.calculateTotal(this.pizzas.value))
   );
 
-  constructor(
-    private fb: FormBuilder,
-    private pizzasStateService: PizzasStateService
-  ) {}
+  constructor(private fb: FormBuilder, private store: Store<PizzasState>) {}
 
   createPizza() {
     return this.fb.group({
@@ -82,6 +74,6 @@ export class PizzaAppComponent {
     console.log(event);
     const { pizzas } = this.pizzaForm.value;
     console.log(pizzas);
-    this.pizzasStateService.createPizzas(pizzas);
+    // this.store.dispatch(savePizzas);
   }
 }
