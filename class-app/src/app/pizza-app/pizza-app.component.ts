@@ -3,7 +3,7 @@ import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Pizza } from 'api/lib/api-interfaces';
 import { map, startWith } from 'rxjs';
-import { PizzasState } from './state';
+import { PizzasState, savePizzas } from './state';
 
 type PizzaPrice = {
   [size: string]: {
@@ -74,6 +74,6 @@ export class PizzaAppComponent {
     console.log(event);
     const { pizzas } = this.pizzaForm.value;
     console.log(pizzas);
-    // this.store.dispatch(savePizzas);
+    this.store.dispatch(savePizzas({ pizzas }));
   }
 }
