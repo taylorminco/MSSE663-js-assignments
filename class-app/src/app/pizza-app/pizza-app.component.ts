@@ -5,6 +5,7 @@ import { Component } from '@angular/core';
   templateUrl: './pizza-app.component.html',
   styleUrls: ['./pizza-app.component.scss'],
 })
+
 export class PizzaAppComponent {
   prices = {
     small: { base: 9.99, size: 10 },

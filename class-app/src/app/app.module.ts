@@ -14,3 +14,4 @@ import { SizePipe } from './shared/pipes/size.pipe';
   bootstrap: [AppComponent],
 })
 export class AppModule {}
+
