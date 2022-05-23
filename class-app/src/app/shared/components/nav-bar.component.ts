@@ -1,3 +1,5 @@
+//Mark Taylor Week 3
+
 import { Component } from '@angular/core';
 
 @Component({
@@ -6,3 +8,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./nav-bar.component.scss'],
 })
 export class NavBarComponent {}
+
+
