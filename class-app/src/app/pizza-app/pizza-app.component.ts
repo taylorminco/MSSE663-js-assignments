@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormArray, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormArray, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Pizza } from 'api/lib/api-interfaces';
 import { map, startWith } from 'rxjs';
@@ -32,8 +32,8 @@ export class PizzaAppComponent {
     pizzas: this.fb.array([this.createPizza()]),
   });
 
-  get pizzas(): FormArray {
-    return this.pizzaForm.get('pizzas') as FormArray;
+  get pizzas(): UntypedFormArray {
+    return this.pizzaForm.get('pizzas') as UntypedFormArray;
   }
 
   total$ = this.pizzas.valueChanges.pipe(
@@ -41,7 +41,7 @@ export class PizzaAppComponent {
     map(() => this.calculateTotal(this.pizzas.value))
   );
 
-  constructor(private fb: FormBuilder, private store: Store<PizzasState>) {}
+  constructor(private fb: UntypedFormBuilder, private store: Store<PizzasState>) {}
 
   createPizza() {
     return this.fb.group({

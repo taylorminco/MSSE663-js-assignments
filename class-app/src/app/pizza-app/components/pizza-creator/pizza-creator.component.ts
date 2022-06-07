@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
+import { AbstractControl, UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-pizza-creator',
@@ -7,7 +7,7 @@ import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
   styleUrls: ['./pizza-creator.component.scss'],
 })
 export class PizzaCreatorComponent {
-  @Input() pizzas!: FormArray;
+  @Input() pizzas!: UntypedFormArray;
 
   @Output() add = new EventEmitter<void>();
   @Output() remove = new EventEmitter<number>();
@@ -44,7 +44,7 @@ export class PizzaCreatorComponent {
     this.openPizza = index;
   }
 
-  toFormGroup(control: AbstractControl): FormGroup {
-    return control as FormGroup;
+  toFormGroup(control: AbstractControl): UntypedFormGroup {
+    return control as UntypedFormGroup;
   }
 }

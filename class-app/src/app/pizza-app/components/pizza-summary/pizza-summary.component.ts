@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
-import { FormArray } from '@angular/forms';
+import { UntypedFormArray } from '@angular/forms';
 
 @Component({
   selector: 'app-pizza-summary',
@@ -8,7 +8,7 @@ import { FormArray } from '@angular/forms';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PizzaSummaryComponent {
-  @Input() pizzas!: FormArray;
+  @Input() pizzas!: UntypedFormArray;
   @Input() total: string | null = '';
   @Input() prices: any;
 }

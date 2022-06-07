@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, Input } from '@angular/core';
-import { FormArray } from '@angular/forms';
+import { UntypedFormArray } from '@angular/forms';
 
 @Component({
   selector: 'app-pizza-viewer',
@@ -26,6 +26,6 @@ import { FormArray } from '@angular/forms';
   ],
 })
 export class PizzViewerComponent {
-  @Input() pizzas!: FormArray;
+  @Input() pizzas!: UntypedFormArray;
   @Input() activePizza = 0;
 }
