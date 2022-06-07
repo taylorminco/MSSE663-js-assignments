@@ -98,5 +98,7 @@
       }
     }
   },
-  "defaultProject": "class-app"
+  "cli": {
+    "analytics": "cf7a8862-fbf0-4ee1-91e9-48ffde66f015"
+  }
 }
